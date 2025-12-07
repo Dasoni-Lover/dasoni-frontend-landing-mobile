@@ -1,9 +1,9 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import styled from "styled-components";
 
-function HeroSection() {
+const HeroSection = forwardRef((props, ref) => {
   return (
-    <HeroContainer>
+    <HeroContainer ref={ref} data-tab-id="hero">
       <HeroIllustration>
         <Rainbow>🌈</Rainbow>
         <HeroHouse>🏡</HeroHouse>
@@ -20,7 +20,7 @@ function HeroSection() {
       </HeroDescription>
     </HeroContainer>
   );
-}
+});
 
 const HeroContainer = styled.section`
   padding: 1.5rem 1.5rem 1.75rem;
@@ -55,5 +55,7 @@ const HeroDescription = styled.p`
   font-size: 0.88rem;
   color: #9f8b78;
 `;
+
+HeroSection.displayName = "HeroSection";
 
 export default HeroSection;

@@ -14,7 +14,9 @@ import ReserveSection from "./components/sections/ReserveSection";
 export default function App() {
   const [activeTab, setActiveTab] = useState("memorial");
   const [hideFloating, setHideFloating] = useState(false);
+  const [isInlineVisible, setIsInlineVisible] = useState(true);
 
+  const inlineReserveRef = useRef(null);
   const memorialRef = useRef(null);
   const lettersRef = useRef(null);
   const myHallRef = useRef(null);
@@ -52,6 +54,14 @@ export default function App() {
       let maxRatio = 0;
 
       entries.forEach((entry) => {
+        if (
+          inlineReserveRef.current &&
+          entry.target === inlineReserveRef.current
+        ) {
+          setIsInlineVisible(entry.isIntersecting);
+          return;
+        }
+
         const tabId = entry.target.getAttribute("data-tab-id");
 
         if (tabId === "reserve") {
@@ -69,7 +79,9 @@ export default function App() {
       }
     }, options);
 
-    Object.values(sectionRefs).forEach((ref) => {
+    const observedRefs = [...Object.values(sectionRefs), inlineReserveRef];
+
+    observedRefs.forEach((ref) => {
       if (ref.current) observer.observe(ref.current);
     });
 
@@ -80,7 +92,10 @@ export default function App() {
     <>
       <GlobalStyle />
       <PageWrapper>
-        <Header />
+        <Header
+          inlineRef={inlineReserveRef}
+          onReserveClick={() => handleTabClick("reserve")}
+        />
         <TabBar activeTab={activeTab} onTabClick={handleTabClick} />
         <HeroSection />
 
@@ -91,7 +106,7 @@ export default function App() {
 
         <Footer />
 
-        {!hideFloating && (
+        {!isInlineVisible && !hideFloating && (
           <FloatingReserveButton onClick={() => handleTabClick("reserve")} />
         )}
       </PageWrapper>

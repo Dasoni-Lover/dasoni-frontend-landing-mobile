@@ -1,24 +1,30 @@
 import React from "react";
 import styled from "styled-components";
+import ImgFrame from "../assets/img-frame.svg";
+import ImgLogo from "../assets/img-logo.svg";
+import ImgHouse from "../assets/img-house.svg";
+import { InlineReserveButton } from "./FloatingReserveButton";
 
-function Header() {
+function Header({ inlineRef, onReserveClick }) {
   return (
     <HeaderContainer>
-      <LogoArea>
-        <LogoHouse>🏠</LogoHouse>
-        <LogoText>
-          <LogoTitle>다소니</LogoTitle>
-          <LogoSub>추억을 머무르게 하는 작은 추모관</LogoSub>
-        </LogoText>
-      </LogoArea>
-      <HeaderCTA>새로 추모관 만들기</HeaderCTA>
+      <img src={ImgFrame} style={{ marginBottom: "25px" }} />
+      <img src={ImgLogo} style={{ marginBottom: "15px" }} />
+      <Title>
+        순우리말로 사랑하는 사람을 뜻하는 다소니는
+        <br />
+        사랑하는 사람을 추모하는 <b>온라인 추모 공간</b>입니다
+      </Title>
+      <img src={ImgHouse} style={{ marginBottom: "45px" }} />
+      <InlineReserveButton ref={inlineRef} onClick={onReserveClick} />
     </HeaderContainer>
   );
 }
 
 const HeaderContainer = styled.header`
-  padding: 1.25rem 1.25rem 0.75rem;
+  padding: 60px 0;
   display: flex;
+  flex-direction: column;
   align-items: center;
   background: radial-gradient(
       106.34% 80.72% at 49.87% 69.12%,
@@ -29,47 +35,15 @@ const HeaderContainer = styled.header`
   justify-content: space-between;
 `;
 
-const LogoArea = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-`;
-
-const LogoHouse = styled.div`
-  width: 32px;
-  height: 32px;
-  border-radius: 10px;
-  background: #ffe0b2;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-const LogoText = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const LogoTitle = styled.div`
-  font-weight: 700;
-  font-size: 1.1rem;
-  color: #ff8a3d;
-`;
-
-const LogoSub = styled.div`
-  font-size: 0.7rem;
-  color: #9f8b78;
-`;
-
-const HeaderCTA = styled.button`
-  border: none;
-  border-radius: 999px;
-  padding: 0.55rem 1rem;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: #ffffff;
-  background: linear-gradient(90deg, #ffb86c, #ff7a7a);
-  box-shadow: 0 4px 12px rgba(255, 138, 61, 0.45);
+const Title = styled.div`
+  color: var(--50, #7a7a7a);
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 144%; /* 23.04px */
+  margin-bottom: 47px;
 `;
 
 export default Header;
