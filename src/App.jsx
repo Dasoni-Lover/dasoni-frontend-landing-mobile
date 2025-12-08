@@ -4,7 +4,6 @@ import Footer from "./components/Footer";
 import FloatingReserveButton from "./components/FloatingReserveButton";
 import GlobalStyle from "./components/GlobalStyle";
 import Header from "./components/Header";
-import HeroSection from "./components/HeroSection";
 import TabBar from "./components/TabBar";
 import LettersSection from "./components/sections/LettersSection";
 import MemorialSection from "./components/sections/MemorialSection";

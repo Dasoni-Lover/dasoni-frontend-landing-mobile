@@ -1,14 +1,6 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useEffect, useState, useRef } from "react";
 import {
-  Avatar,
-  CardBody,
-  CardDate,
-  CardHeader,
-  CardImage,
-  CardName,
   CardScrollWrapper,
-  CardText,
-  PhotoCard,
   SectionContainer,
   SectionIconWrapper,
   SectionLabel,
@@ -28,63 +20,246 @@ import ImgAIResponse from "../../assets/img-ai-response.svg";
 import ImgMockUp from "../../assets/img-mockup.svg";
 
 const MemorialSection = forwardRef((_, ref) => {
+  const [isSectionVisible, setIsSectionVisible] = useState(false);
+  const [isAIVisible, setIsAIVisible] = useState(false);
+  const [isLinkVisible, setIsLinkVisible] = useState(false);
+
+  const aiRef = useRef(null);
+  const linkRef = useRef(null);
+
+  // 전체 MemorialSection 진입 시 (상단 영역용)
+  useEffect(() => {
+    if (!ref || !("current" in ref)) return;
+    const target = ref.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsSectionVisible(true);
+            observer.unobserve(entry.target); // 한 번만
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+
+    observer.observe(target);
+
+    return () => {
+      if (target) observer.unobserve(target);
+      observer.disconnect();
+    };
+  }, [ref]);
+
+  // AISection 진입 시
+  useEffect(() => {
+    const target = aiRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsAIVisible(true);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.8 }
+    );
+
+    observer.observe(target);
+
+    return () => {
+      if (target) observer.unobserve(target);
+      observer.disconnect();
+    };
+  }, []);
+
+  // LinkShareSection 진입 시
+  useEffect(() => {
+    const target = linkRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsLinkVisible(true);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.8 }
+    );
+
+    observer.observe(target);
+
+    return () => {
+      if (target) observer.unobserve(target);
+      observer.disconnect();
+    };
+  }, []);
+
   return (
     <SectionContainer
       ref={ref}
       data-tab-id="memorial"
       $bgGradient="linear-gradient(180deg, #FFEED9 27.4%, #FFC882 39.42%, #FFFDFA 53.37%)"
     >
-      <SectionIconWrapper>
-        <img src={ImgYellowHouse} style={{ marginTop: "50px" }} />
-        <SectionLabel>추모관</SectionLabel>
-      </SectionIconWrapper>
-      <SectionTitle>
-        고인과의 추억이 담긴 사진을 <br /> 앨범에 올려주세요
-      </SectionTitle>
-      <SectionSubtitle style={{ marginBottom: "43px" }}>
-        추모관에 방문한 추모객들과 추억을 나눌 수 있어요
-      </SectionSubtitle>
+      {/* 섹션 진입 시 등장하는 상단 영역들 */}
+      <FadeInItem $visible={isSectionVisible} $delay="0s">
+        <SectionIconWrapper>
+          <img src={ImgYellowHouse} style={{ marginTop: "50px" }} />
+          <SectionLabel>추모관</SectionLabel>
+        </SectionIconWrapper>
+      </FadeInItem>
 
-      <CardScrollWrapper>
-        <PostImg src={ImgPost1} />
-        <PostImg src={ImgPost2} />
-        <PostImg src={ImgPost3} />
-      </CardScrollWrapper>
+      <FadeInItem $visible={isSectionVisible} $delay="0.1s">
+        <SectionTitle>
+          고인과의 추억이 담긴 사진을 <br /> 앨범에 올려주세요
+        </SectionTitle>
+      </FadeInItem>
 
-      <SectionTitle>
-        함께한 순간의 사진이 남아있지 않아 아쉬우신가요?
-      </SectionTitle>
-      <SectionSubtitle style={{ marginBottom: "18px" }}>
-        혹은 함께하지 못해 상상만 했던 순간이 있나요? <br />
-        기억 속의 장면을 AI로 직접 만들어 보세요.
-      </SectionSubtitle>
-      <AISection>
-        <RequestImg src={ImgAIRequest} />
-        <ReqeustChat>
-          우리 엄마가 내 첫 아이 유빈이 한번 안고 있는 모습 보고싶다
-        </ReqeustChat>
-        <ResponseImg src={ImgAIResponse} />
-        <ResponseChat>요청하신 이미지를 생성했어요</ResponseChat>
-      </AISection>
-      <LinkShareSection>
-        <SectionTitle>추모관 링크를 공유해 주세요</SectionTitle>
-        <SectionSubtitle style={{ marginBottom: "18px" }}>
-          고인을 사랑했던 이들과 함께 추억을 모아 보세요
-          <br />
-          기억을 나누는 순간들이 서로에게 따뜻한 위로가 되어줄 거예요
+      <FadeInItem $visible={isSectionVisible} $delay="0.2s">
+        <SectionSubtitle style={{ marginBottom: "43px" }}>
+          추모관에 방문한 추모객들과 추억을 나눌 수 있어요
         </SectionSubtitle>
-        <img src={ImgMockUp} />
-      </LinkShareSection>
+      </FadeInItem>
+
+      <FadeInItem $visible={isSectionVisible} $delay="0.3s">
+        <CardScrollWrapper>
+          <PostImg src={ImgPost1} />
+          <PostImg src={ImgPost2} />
+          <PostImg src={ImgPost3} />
+        </CardScrollWrapper>
+      </FadeInItem>
+
+      {/* AISection: 이 영역에 실제로 도달했을 때 내부 컴포넌트 순차 애니메이션 */}
+      <FadeInWrapper ref={aiRef}>
+        <FadeInItem $visible={isAIVisible} $delay="0s">
+          <SectionTitle>
+            함께한 순간의 사진이 남아있지 않아 아쉬우신가요?
+          </SectionTitle>
+        </FadeInItem>
+
+        <FadeInItem $visible={isAIVisible} $delay="0.1s">
+          <SectionSubtitle style={{ marginBottom: "18px" }}>
+            혹은 함께하지 못해 상상만 했던 순간이 있나요? <br />
+            기억 속의 장면을 AI로 직접 만들어 보세요.
+          </SectionSubtitle>
+        </FadeInItem>
+        <YellowBg>
+          {/* 오른쪽 정렬 (요청 버블 쪽) */}
+          <FadeInItem
+            $visible={isAIVisible}
+            $delay="0.2s"
+            $fullWidth
+            $align="right"
+          >
+            <RequestImg src={ImgAIRequest} />
+          </FadeInItem>
+
+          <FadeInItem
+            $visible={isAIVisible}
+            $delay="0.3s"
+            $fullWidth
+            $align="right"
+          >
+            <ReqeustChat>
+              우리 엄마가 내 첫 아이 유빈이 한번 안고 있는 모습 보고싶다
+            </ReqeustChat>
+          </FadeInItem>
+
+          {/* 왼쪽 정렬 (응답 버블 쪽) */}
+          <FadeInItem
+            $visible={isAIVisible}
+            $delay="0.4s"
+            $fullWidth
+            $align="left"
+          >
+            <ResponseImg src={ImgAIResponse} />
+          </FadeInItem>
+
+          <FadeInItem
+            $visible={isAIVisible}
+            $delay="0.5s"
+            $fullWidth
+            $align="left"
+          >
+            <ResponseChat>요청하신 이미지를 생성했어요</ResponseChat>
+          </FadeInItem>
+        </YellowBg>
+      </FadeInWrapper>
+
+      {/* LinkShareSection: 이 영역에 도달했을 때 내부 컴포넌트 순차 애니메이션 */}
+      <FadeInWrapper ref={linkRef}>
+        <FadeInItem $visible={isLinkVisible} $delay="0s">
+          <LinkShareSection>
+            <SectionTitle>추모관 링크를 공유해 주세요</SectionTitle>
+          </LinkShareSection>
+        </FadeInItem>
+
+        <FadeInItem $visible={isLinkVisible} $delay="0.1s">
+          <SectionSubtitle
+            style={{ marginBottom: "18px", textAlign: "center" }}
+          >
+            고인을 사랑했던 이들과 함께 추억을 모아 보세요
+            <br />
+            기억을 나누는 순간들이 서로에게 따뜻한 위로가 되어줄 거예요
+          </SectionSubtitle>
+        </FadeInItem>
+
+        <FadeInItem $visible={isLinkVisible} $delay="0.2s">
+          <img src={ImgMockUp} />
+        </FadeInItem>
+      </FadeInWrapper>
     </SectionContainer>
   );
 });
 
+// 상단/공통 페이드인
+const FadeInItem = styled.div`
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transform: translateY(${({ $visible }) => ($visible ? "0" : "20px")});
+  transition: opacity 0.6s ease-out ${({ $delay }) => $delay || "0s"},
+    transform 0.6s ease-out ${({ $delay }) => $delay || "0s"};
+
+  /* ✅ 아래부터 추가: 필요할 때만 flex 컨테이너로 써서 정렬 제어 */
+  ${({ $fullWidth }) =>
+    $fullWidth &&
+    `
+    width: 100%;
+    display: flex;
+  `}
+
+  ${({ $fullWidth, $align }) =>
+    $fullWidth &&
+    `
+    justify-content: ${
+      $align === "right"
+        ? "flex-end"
+        : $align === "left"
+        ? "flex-start"
+        : "center"
+    };
+  `}
+`;
+
+// 개별 섹션 래퍼 (애니메이션 X, ref 용도)
+const FadeInWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
 const PostImg = styled.img``;
 
-const AISection = styled.div`
+const YellowBg = styled.div`
   display: inline-flex;
   width: 100%;
-
   align-items: center;
   border-radius: 6px;
   background: #ffebd1;
@@ -93,11 +268,10 @@ const AISection = styled.div`
 `;
 
 const RequestImg = styled.img`
-  align-self: flex-end;
   margin-bottom: 10px;
 `;
+
 const ResponseImg = styled.img`
-  align-self: flex-start;
   margin-bottom: 10px;
 `;
 
