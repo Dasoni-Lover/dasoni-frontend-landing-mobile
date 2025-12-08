@@ -1,7 +1,6 @@
 import styled from "styled-components";
 
 export const SectionContainer = styled.section`
-  padding: 1.75rem 1.25rem 2.25rem;
   background: ${({ $bgGradient }) => $bgGradient || "#fff7f0"};
 `;
 
@@ -13,33 +12,44 @@ export const SectionIconWrapper = styled.div`
 `;
 
 export const SectionLabel = styled.div`
-  margin-top: 0.35rem;
-  font-size: 0.8rem;
-  color: #ff8a3d;
-  font-weight: 600;
+  color: #ffbc67;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: 150%; /* 30px */
+  margin-bottom: 35px;
 `;
 
 export const SectionTitle = styled.h2`
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #4b3a30;
+  color: var(--70, #4a4a4a);
   text-align: center;
-  margin-bottom: 0.4rem;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 145%; /* 23.2px */
+  margin-bottom: 4px;
 `;
 
 export const SectionSubtitle = styled.p`
-  font-size: 0.86rem;
-  color: #9f8b78;
+  color: var(--70, #4a4a4a);
   text-align: center;
-  margin-bottom: 1.3rem;
-  line-height: 1.5;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 134%; /* 18.76px */
 `;
 
 export const CardScrollWrapper = styled.div`
   display: flex;
   gap: 0.8rem;
   overflow-x: auto;
-  padding-bottom: 0.5rem;
+  padding-bottom: 105px;
+  padding-left: 20px;
+  padding-right: 20px;
   -webkit-overflow-scrolling: touch;
 
   &::-webkit-scrollbar {

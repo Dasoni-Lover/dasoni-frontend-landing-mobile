@@ -49,11 +49,10 @@ const TabItem = styled.button`
   padding: 0.7rem 0.25rem;
   border: none;
   background: transparent;
-  font-size: 0.82rem;
+  font-size: 15px;
   font-weight: ${({ $active }) => ($active ? 700 : 500)};
-  color: ${({ $active }) => ($active ? "#ff8a3d" : "#b19b86")};
-  border-bottom: 3px solid
-    ${({ $active }) => ($active ? "#ff8a3d" : "transparent")};
+  color: ${({ $active }) => ($active ? "#313131" : "#ACACAC")};
+  cursor: pointer;
 `;
 
 export default TabBar;

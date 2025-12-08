@@ -93,7 +93,8 @@ export default function App() {
     );
 
     if (reserveRef.current) reserveObserver.observe(reserveRef.current);
-    if (inlineReserveRef.current) inlineObserver.observe(inlineReserveRef.current);
+    if (inlineReserveRef.current)
+      inlineObserver.observe(inlineReserveRef.current);
 
     return () => {
       reserveObserver.disconnect();
@@ -110,7 +111,6 @@ export default function App() {
           onReserveClick={() => handleTabClick("reserve")}
         />
         <TabBar activeTab={activeTab} onTabClick={handleTabClick} />
-        <HeroSection />
 
         <MemorialSection ref={memorialRef} />
         <LettersSection ref={lettersRef} />
