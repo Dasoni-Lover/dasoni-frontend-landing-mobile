@@ -19,7 +19,7 @@ const ReserveSection = forwardRef((_, ref) => {
       style={{ paddingBottom: "25px" }}
     >
       <SectionIconWrapper>
-        <ReserveInfo style={{ marginTop: "55px" }}>
+        <ReserveInfo style={{ marginTop: "55px", marginBottom: "27px" }}>
           사전예약 후 다소니를 가장 먼저 만나보세요
         </ReserveInfo>
       </SectionIconWrapper>
@@ -27,38 +27,40 @@ const ReserveSection = forwardRef((_, ref) => {
       <ReserveContent style={{ marginBottom: "15px" }}>
         2025. 12. 10. ~ 25. 12. 20. (목)
       </ReserveContent>
-      <ReserveLabel>사전예약 기한</ReserveLabel>
+      <ReserveLabel>사전예약 헤택</ReserveLabel>
       <ReserveContent style={{ marginBottom: "28px" }}>
         AI 음성 편지 생성, AI 이미지 생성 무료 이용
       </ReserveContent>
       <ReserveGuide>사전 예약 신청을 위해 아래 폼을 입력해주세요</ReserveGuide>
       <ReserveForm>
         <FormRow>
-          <FormLabel>성별</FormLabel>
-          <GenderToggle>
-            <GenderButton
-              type="button"
-              $active={gender === "male"}
-              onClick={() => setGender("male")}
-            >
-              남자
-            </GenderButton>
-            <GenderButton
-              type="button"
-              $active={gender === "female"}
-              onClick={() => setGender("female")}
-            >
-              여자
-            </GenderButton>
-          </GenderToggle>
-        </FormRow>
-        <FormRow>
-          <FormLabel>생년월일</FormLabel>
-          <FormInput placeholder="2000/12/12" />
-        </FormRow>
-        <FormRow>
-          <FormLabel>이메일 주소</FormLabel>
-          <FormInput placeholder="예) dasoni@naver.com" />
+          <FormColumn>
+            <FormLabel>성별</FormLabel>
+            <FormLabel>생년월일</FormLabel>
+            <FormLabel>이메일 주소</FormLabel>
+          </FormColumn>
+
+          <FormColumn>
+            <GenderToggle>
+              <GenderButton
+                type="button"
+                $active={gender === "male"}
+                onClick={() => setGender("male")}
+              >
+                남자
+              </GenderButton>
+              <GenderButton
+                type="button"
+                $active={gender === "female"}
+                onClick={() => setGender("female")}
+              >
+                여자
+              </GenderButton>
+            </GenderToggle>
+
+            <FormInput placeholder="2000/12/12" />
+            <FormInput placeholder="예) dasoni@naver.com" />
+          </FormColumn>
         </FormRow>
         <ReserveButton type="button">사전 예약 제출하기</ReserveButton>
       </ReserveForm>
@@ -112,79 +114,114 @@ const ReserveGuide = styled.div`
   line-height: 130%; /* 18.2px */
   margin-bottom: 15px;
 `;
+
 const ReserveForm = styled.div`
   background: #ffffff;
-  border-radius: 18px;
-  padding: 18px 16px 20px;
+  border-radius: 13px;
+  padding: 30px;
   margin: 0 25px;
   box-shadow: 0 10px 32px rgba(0, 0, 0, 0.06);
   border: 1px solid #f1eeea;
 `;
 
 const FormRow = styled.div`
-  margin-bottom: 14px;
+  display: flex;
+  gap: 20px;
+  margin-bottom: 25px;
+`;
+
+const FormColumn = styled.div`
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+  justify-content: space-around;
 `;
 
 const FormLabel = styled.div`
-  font-size: 14px;
-  font-weight: 700;
-  color: #8d8a86;
-  margin-bottom: 8px;
+  color: var(--30, #acacac);
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%; /* 20.8px */
+  white-space: nowrap;
 `;
 
 const GenderToggle = styled.div`
   display: grid;
+  width: 120px;
+
   grid-template-columns: repeat(2, 1fr);
-  gap: 6px;
-  padding: 4px;
-  border-radius: 12px;
+  border-radius: 8px;
   background: #f9f8f7;
-  border: 1px solid #e7e2dc;
+  border: 1px solid var(--10, #ddd);
 `;
 
 const GenderButton = styled.button`
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 12px 0;
-  font-size: 14px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 500;
   cursor: pointer;
-  background: ${({ $active }) =>
-    $active ? "linear-gradient(90deg, #ffb66a 0%, #ff8b6a 100%)" : "transparent"};
-  color: ${({ $active }) => ($active ? "#ffffff" : "#c3bcb4")};
-  box-shadow: ${({ $active }) =>
-    $active ? "0 6px 18px rgba(255, 143, 106, 0.35)" : "none"};
+  background: ${({ $active }) => ($active ? "#FFBC67" : "transparent")};
+  color: ${({ $active }) => ($active ? "#ffffff" : "#ACACAC")};
   transition: all 0.15s ease-in-out;
 `;
 
 const FormInput = styled.input`
   width: 100%;
-  border-radius: 12px;
-  border: 1px solid #e8e4df;
+  border-radius: 8px;
+  border: 1px solid var(--main, #ffbc67);
   padding: 12px 14px;
-  font-size: 14px;
-  font-weight: 600;
   outline: none;
   background: #fdfcfb;
-  color: #8d8a86;
+
+  color: #4a4a4a;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%; /* 20.8px */
 
   &::placeholder {
-    color: #cfcac4;
-    font-weight: 600;
+    color: var(--10, #ddd);
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 130%; /* 20.8px */
   }
 `;
 
-const ReserveButton = styled.button`
-  margin-top: 6px;
-  width: 100%;
+const ReserveButton = styled.div`
+  display: flex;
+  width: 290px;
+  height: 54px;
+  padding: 13px 0;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+
   border-radius: 12px;
-  border: none;
-  padding: 14px 1rem;
-  font-size: 14px;
+  background: linear-gradient(
+    90deg,
+    #ffaab0 9.13%,
+    #ffc379 76.44%,
+    #ff9f63 100%
+  );
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.04);
+  outline: none;
+
+  color: #fff;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 16px;
+  font-style: normal;
   font-weight: 700;
-  color: #ffffff;
-  background: linear-gradient(90deg, #ffc36f 0%, #ff936f 100%);
-  box-shadow: 0 10px 24px rgba(255, 146, 111, 0.35);
+  line-height: 145%; /* 23.2px */
   cursor: pointer;
 `;
 
