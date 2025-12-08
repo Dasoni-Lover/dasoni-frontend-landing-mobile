@@ -5,7 +5,11 @@ const GlobalStyle = createGlobalStyle`
     font-family: "Pretendard";
     font-weight: 100 900;
     font-display: swap;
-    src: url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.woff2") format("woff2-variations");
+    src:
+      url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.woff2")
+        format("woff2-variations"),
+      url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-regular.woff2")
+        format("woff2");
   }
 
   * {
@@ -24,7 +28,10 @@ const GlobalStyle = createGlobalStyle`
     color: #333;
   }
 
-  button {
+  button,
+  input,
+  textarea,
+  select {
     font-family: inherit;
   }
 `;
