@@ -8,7 +8,6 @@ export const SectionIconWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 0.75rem;
 `;
 
 export const SectionLabel = styled.div`
