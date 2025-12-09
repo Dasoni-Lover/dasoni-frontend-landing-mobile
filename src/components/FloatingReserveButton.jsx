@@ -1,6 +1,5 @@
 import React, { forwardRef } from "react";
-import styled from "styled-components";
-
+import styled, { keyframes } from "styled-components";
 function FloatingReserveButton({ onClick }) {
   return (
     <FloatingButton type="button" onClick={onClick}>
@@ -17,6 +16,18 @@ export const InlineReserveButton = forwardRef(({ onClick }, ref) => {
   );
 });
 
+const flowing = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+`;
+
 const ButtonBase = styled.button`
   display: flex;
   justify-content: center;
@@ -25,12 +36,19 @@ const ButtonBase = styled.button`
   border: none;
   cursor: pointer;
   border-radius: 12px;
+
+  /* 🔥 여기만 변경: 움직이는 그라데이션 */
   background: linear-gradient(
     90deg,
-    #ffaab0 9.13%,
-    #ffc379 76.44%,
-    #ff9f63 100%
+    #ffaab0,
+    #ffc379,
+    #ff9f63,
+    #ffc379,
+    #ffaab0
   );
+  background-size: 300% 300%;
+  animation: ${flowing} 4s ease infinite;
+
   box-shadow: 0 0 13.6px 0 #ffd8b1;
   color: #fff;
   text-align: center;

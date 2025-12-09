@@ -16,6 +16,9 @@ import ImgLetter3 from "../../assets/img-letter-3.svg";
 import ImgTape from "../../assets/img-tape.svg";
 import SampleVoice from "../../assets/sample-voice.mp3";
 
+import PlayIcon from "../../assets/icon-play.svg";
+import PauseIcon from "../../assets/icon-pause.svg";
+
 const LETTER_IMAGES = [ImgLetter1, ImgLetter2, ImgLetter3];
 
 const LettersSection = forwardRef((_, ref) => {
@@ -28,6 +31,12 @@ const LettersSection = forwardRef((_, ref) => {
   // 음성 섹션(아래쪽) 애니메이션용
   const [isVoiceVisible, setIsVoiceVisible] = useState(false);
   const voiceRef = useRef(null);
+
+  // 🎵 오디오 플레이어 상태
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
 
   // 상단 섹션 진입 감지
   useEffect(() => {
@@ -79,6 +88,67 @@ const LettersSection = forwardRef((_, ref) => {
       observer.disconnect();
     };
   }, []);
+
+  // 🎵 오디오 이벤트 핸들링
+  const handlePlayPause = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      audio.play();
+    }
+    setIsPlaying((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const handleTimeUpdate = () => {
+      setCurrentTime(audio.currentTime);
+    };
+
+    const handleLoadedMetadata = () => {
+      setDuration(audio.duration || 0);
+    };
+
+    const handleEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+    };
+
+    audio.addEventListener("timeupdate", handleTimeUpdate);
+    audio.addEventListener("loadedmetadata", handleLoadedMetadata);
+    audio.addEventListener("ended", handleEnded);
+
+    return () => {
+      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      audio.removeEventListener("loadedmetadata", handleLoadedMetadata);
+      audio.removeEventListener("ended", handleEnded);
+    };
+  }, []);
+
+  const formatTime = (time) => {
+    if (isNaN(time)) return "00:00";
+    const minutes = Math.floor(time / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = Math.floor(time % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  };
+
+  const handleProgressClick = (e) => {
+    if (!duration || !audioRef.current) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const width = rect.width;
+    const newTime = (clickX / width) * duration;
+    audioRef.current.currentTime = newTime;
+  };
 
   // 드래그 상태
   const [dragState, setDragState] = useState({
@@ -298,13 +368,29 @@ const LettersSection = forwardRef((_, ref) => {
         </FadeInItem>
 
         <FadeInItem $visible={isVoiceVisible} $delay="0.2s">
-          <TapeImg src={ImgTape} />
+          <TapeWrapper>
+            <TapeImg src={ImgTape} />
+          </TapeWrapper>
         </FadeInItem>
 
+        {/* 🎵 커스텀 음성 플레이어 */}
         <VoicePlayerWrapper $visible={isVoiceVisible}>
-          <audio controls src={SampleVoice}>
-            브라우저에서 오디오를 지원하지 않습니다.
-          </audio>
+          <PlayerPlayButton
+            src={isPlaying ? PauseIcon : PlayIcon}
+            alt={isPlaying ? "일시 정지" : "재생"}
+            onClick={handlePlayPause}
+          />
+          <PlayerTime>
+            {formatTime(currentTime)} / {formatTime(duration)}
+          </PlayerTime>
+          <PlayerProgressWrapper onClick={handleProgressClick}>
+            <PlayerProgress
+              value={duration ? (currentTime / duration) * 100 : 0}
+            >
+              <PlayerProgressCircle />
+            </PlayerProgress>
+          </PlayerProgressWrapper>
+          <audio ref={audioRef} src={SampleVoice} preload="metadata" />
         </VoicePlayerWrapper>
 
         <FadeInItem $visible={isVoiceVisible} $delay="0.4s">
@@ -324,6 +410,7 @@ export default LettersSection;
 /* ---------- styled-components ---------- */
 
 const FadeInItem = styled.div`
+  width: 100%;
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transform: translateY(${({ $visible }) => ($visible ? "0" : "20px")});
   transition: opacity 0.6s ease-out ${({ $delay }) => $delay || "0s"},
@@ -371,8 +458,13 @@ const LetterImage = styled.img`
 `;
 
 const TapeImg = styled.img`
-  justify-self: flex-end;
   display: block;
+`;
+
+const TapeWrapper = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: flex-end; /* 👉 오른쪽 끝으로 붙이기 */
 `;
 
 const VoiceText = styled.div`
@@ -389,19 +481,80 @@ const VoiceSectionWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  width: 100%;
 `;
 
+/* 🎵 MyHall VoiceRecord 느낌의 플레이어 카드 */
 const VoicePlayerWrapper = styled.div`
   width: 100%;
   max-width: 320px;
-  margin-bottom: 18px;
+  height: 3rem;
+  margin: 55px 0 15px 0;
 
-  /* ✅ 페이드 인 효과 */
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  border-radius: 0.75rem;
+  background: #fff;
+  padding: 0 1rem;
+  box-sizing: border-box;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.04);
+
+  /* 페이드 인 효과 */
   opacity: ${({ $visible }) => ($visible ? 1 : 0)};
   transform: translateY(${({ $visible }) => ($visible ? "0" : "20px")});
   transition: opacity 0.6s ease-out 0.3s, transform 0.6s ease-out 0.3s;
 
   audio {
-    width: 100%;
+    display: none;
   }
+`;
+
+const PlayerPlayButton = styled.img`
+  flex-shrink: 0;
+  margin-right: 0.75rem;
+  margin-left: 0.75rem;
+  cursor: pointer;
+`;
+
+const PlayerTime = styled.div`
+  color: var(--100, #000);
+  font-family: Pretendard;
+  font-size: 0.9rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+  text-align: center;
+  margin-right: 1rem;
+`;
+
+const PlayerProgressWrapper = styled.div`
+  flex: 1;
+  height: 0.4375rem;
+  border-radius: 1.25rem;
+  background: var(--50, #7a7a7a);
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+`;
+
+const PlayerProgress = styled.div`
+  width: ${({ value }) => value}%;
+  height: 100%;
+  background-color: #0e0e0e;
+  border-radius: 1.25rem;
+  transition: width 0.1s linear;
+  position: relative;
+`;
+
+const PlayerProgressCircle = styled.div`
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(50%, -50%);
+  width: 0.8125rem;
+  height: 0.8125rem;
+  background: #0e0e0e;
+  border-radius: 50%;
 `;

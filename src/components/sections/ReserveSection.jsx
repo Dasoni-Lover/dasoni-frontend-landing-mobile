@@ -6,7 +6,7 @@ import {
   SectionSubtitle,
   SectionTitle,
 } from "./SectionBase";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 const ReserveSection = forwardRef((_, ref) => {
   const [gender, setGender] = useState("male");
@@ -284,6 +284,18 @@ const FormInput = styled.input`
   }
 `;
 
+const flowing = keyframes`
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+`;
+
 const ReserveButton = styled.div`
   display: flex;
   width: 100%;
@@ -294,12 +306,18 @@ const ReserveButton = styled.div`
   gap: 8px;
 
   border-radius: 12px;
+  /* 🔥 흐르는 그라데이션 */
   background: linear-gradient(
     90deg,
-    #ffaab0 9.13%,
-    #ffc379 76.44%,
-    #ff9f63 100%
+    #ffaab0,
+    #ffc379,
+    #ff9f63,
+    #ffc379,
+    #ffaab0
   );
+  background-size: 300% 300%;
+  animation: ${flowing} 4s ease infinite;
+
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.04);
   outline: none;
 
