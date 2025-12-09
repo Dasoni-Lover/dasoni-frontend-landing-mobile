@@ -38,7 +38,7 @@ const ReserveSection = forwardRef((_, ref) => {
           }
         });
       },
-      { threshold: 0.3 }
+      { threshold: 0.7 }
     );
 
     observer.observe(target);
