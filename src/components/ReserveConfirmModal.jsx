@@ -1,6 +1,6 @@
 // src/components/ReserveConfirmModal.jsx
 import React from "react";
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 export default function ReserveConfirmModal({ onClose }) {
   return (
@@ -43,6 +43,17 @@ export default function ReserveConfirmModal({ onClose }) {
       Styled Components
    ====================== */
 
+const fadeInUp = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+`;
+
 const ConfirmOverlay = styled.div`
   position: fixed;
   inset: 0;
@@ -64,6 +75,9 @@ const ConfirmBox = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  /* ✨ 부드러운 등장 애니메이션 */
+  animation: ${fadeInUp} 0.25s ease-out;
 `;
 
 const ConfirmText = styled.div`

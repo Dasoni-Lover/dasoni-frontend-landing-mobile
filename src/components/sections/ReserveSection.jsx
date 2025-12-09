@@ -1,3 +1,4 @@
+// src/components/sections/ReserveSection.jsx
 import React, { forwardRef, useState, useEffect } from "react";
 import {
   SectionContainer,
@@ -8,15 +9,18 @@ import {
 } from "./SectionBase";
 import styled, { keyframes } from "styled-components";
 import ReserveConfirmModal from "../ReserveConfirmModal";
+import { supabase } from "../../lib/supabaseClient"; // ✅ 경로는 프로젝트 구조에 맞게 조정
 
 const ReserveSection = forwardRef((_, ref) => {
   const [gender, setGender] = useState("male");
   const [isVisible, setIsVisible] = useState(false);
 
-  // ✅ 생년월일 상태 & DatePicker 모달 상태
+  // ✅ 생년월일 & 이메일 상태
   const [birthDate, setBirthDate] = useState("");
-  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [email, setEmail] = useState("");
 
+  // ✅ DatePicker / Confirm 모달 상태
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   // 섹션 진입 시 애니메이션 트리거
@@ -55,6 +59,48 @@ const ReserveSection = forwardRef((_, ref) => {
 
   const handleSelectDate = (date) => {
     setBirthDate(formatDate(date));
+  };
+
+  // ✅ 사전 예약 제출 → Supabase 저장
+  const handleSubmitReserve = async () => {
+    // 간단한 유효성 체크
+    if (!birthDate) {
+      alert("생년월일을 선택해주세요.");
+      return;
+    }
+    if (!email) {
+      alert("이메일 주소를 입력해주세요.");
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from("dasoni-reservations")
+        .insert([
+          {
+            gender,
+            birth_date: birthDate,
+            email,
+          },
+        ]);
+
+      if (error) {
+        console.error("Supabase insert error:", error);
+        alert("예약 저장 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
+        return;
+      }
+
+      // ✅ 성공 시 모달 오픈
+      setIsConfirmOpen(true);
+
+      // 폼 초기화
+      setGender("male");
+      setBirthDate("");
+      setEmail("");
+    } catch (err) {
+      console.error(err);
+      alert("알 수 없는 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
+    }
   };
 
   return (
@@ -132,10 +178,17 @@ const ReserveSection = forwardRef((_, ref) => {
                   onClick={() => setIsDatePickerOpen(true)}
                 />
 
-                <FormInput placeholder="예) dasoni@naver.com" />
+                {/* ✅ 이메일 입력을 state에 연결 */}
+                <FormInput
+                  placeholder="예) dasoni@naver.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </FormColumn>
             </FormRow>
-            <ReserveButton type="button" onClick={() => setIsConfirmOpen(true)}>
+
+            {/* ✅ Supabase 연동된 제출 버튼 */}
+            <ReserveButton type="button" onClick={handleSubmitReserve}>
               사전 예약 제출하기
             </ReserveButton>
           </ReserveForm>
@@ -150,12 +203,17 @@ const ReserveSection = forwardRef((_, ref) => {
           onClose={() => setIsDatePickerOpen(false)}
         />
       )}
+
+      {/* ✅ 예약 완료 안내 모달 */}
       {isConfirmOpen && (
         <ReserveConfirmModal onClose={() => setIsConfirmOpen(false)} />
       )}
     </>
   );
 });
+
+ReserveSection.displayName = "ReserveSection";
+export default ReserveSection;
 
 const SectionIconReserve = styled.div`
   font-size: 2rem;
@@ -346,9 +404,8 @@ const ReserveButton = styled.div`
 const DatePickerModal = ({ selectedDate, onChange, onClose }) => {
   const today = new Date();
   const currentYear = today.getFullYear();
-  const minYear = 1930; // 필요하면 범위 조정해서 사용 (예: 1950 등)
+  const minYear = 1930;
 
-  // 초기 연/월 설정 (선택된 생일이 있으면 그걸로, 없으면 오늘 기준)
   let initialYear = today.getFullYear();
   let initialMonth = today.getMonth();
 
@@ -363,12 +420,11 @@ const DatePickerModal = ({ selectedDate, onChange, onClose }) => {
   const [viewYear, setViewYear] = useState(initialYear);
   const [viewMonth, setViewMonth] = useState(initialMonth); // 0~11
 
-  // 해당 연/월의 날짜 정보 계산
   const daysInMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
   const firstDay = new Date(viewYear, viewMonth, 1).getDay(); // 0:일요일
 
   const weeks = [];
-  let currentDay = 1 - firstDay; // 첫 주 시작 index
+  let currentDay = 1 - firstDay;
 
   while (currentDay <= daysInMonth) {
     const week = [];
@@ -383,7 +439,6 @@ const DatePickerModal = ({ selectedDate, onChange, onClose }) => {
     weeks.push(week);
   }
 
-  // 선택된 날짜 파싱
   const parsedSelected = (() => {
     if (!selectedDate) return null;
     const [y, m, d] = selectedDate.split("/");
@@ -411,7 +466,6 @@ const DatePickerModal = ({ selectedDate, onChange, onClose }) => {
     onClose();
   };
 
-  // 연도 옵션 (현재년도 ~ minYear까지 역순)
   const yearOptions = [];
   for (let y = currentYear; y >= minYear; y--) {
     yearOptions.push(y);
@@ -481,14 +535,6 @@ const DatePickerModal = ({ selectedDate, onChange, onClose }) => {
   );
 };
 
-ReserveSection.displayName = "ReserveSection";
-
-export default ReserveSection;
-
-/* ===========================
-     ✅ DatePicker styled-components
-     =========================== */
-
 const DatePickerOverlay = styled.div`
   position: fixed;
   inset: 0;
@@ -516,14 +562,12 @@ const DatePickerHeader = styled.div`
   margin-bottom: 14px;
 `;
 
-/* 연/월 셀렉트 래퍼 */
 const YearMonthSelectWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
 `;
 
-/* 기본 select 스타일 */
 const BaseSelect = styled.select`
   appearance: none;
   -webkit-appearance: none;
@@ -554,7 +598,6 @@ const MonthSelect = styled(BaseSelect)`
   min-width: 80px;
 `;
 
-/* 헤더 우측 닫기 버튼 (심플 텍스트) */
 const CloseHeaderButton = styled.button`
   border: none;
   background: transparent;
