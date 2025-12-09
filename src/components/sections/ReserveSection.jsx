@@ -545,6 +545,17 @@ const DatePickerOverlay = styled.div`
   align-items: flex-end;
 `;
 
+const datePickerSlideUp = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
 const DatePickerBox = styled.div`
   width: 100%;
   max-width: 430px;
@@ -553,6 +564,7 @@ const DatePickerBox = styled.div`
   padding: 20px 24px 24px;
   box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.08);
   font-family: Pretendard;
+  animation: ${datePickerSlideUp} 0.25s ease-out;
 `;
 
 const DatePickerHeader = styled.div`

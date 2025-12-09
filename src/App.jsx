@@ -10,6 +10,9 @@ import MemorialSection from "./components/sections/MemorialSection";
 import MyHallSection from "./components/sections/MyHallSection";
 import ReserveSection from "./components/sections/ReserveSection";
 
+// 🎵 BGM 파일 import (Vite에서 자동으로 URL로 번들됨)
+import bgmSrc from "./assets/dasoni-bgm.mp3";
+
 export default function App() {
   const [activeTab, setActiveTab] = useState("memorial");
   const [hideFloating, setHideFloating] = useState(false);
@@ -27,6 +30,9 @@ export default function App() {
     myHall: myHallRef,
     reserve: reserveRef,
   };
+
+  // 🎵 BGM용 audio ref
+  const bgmRef = useRef(null);
 
   const handleTabClick = (key) => {
     const targetRef = sectionRefs[key];
@@ -101,9 +107,62 @@ export default function App() {
     };
   }, []);
 
+  // 🎵 첫 사용자 인터랙션(클릭/터치) 이후에만 BGM 재생
+  useEffect(() => {
+    const audio = bgmRef.current;
+    if (!audio) return;
+
+    const handleFirstInteraction = () => {
+      // 시작 설정
+      audio.currentTime = 0;
+      audio.volume = 0;
+
+      const playPromise = audio.play();
+
+      if (playPromise) {
+        playPromise
+          .then(() => {
+            // ✅ 재생 성공 → 볼륨 페이드인
+            let v = 0;
+            const target = 0.6; // 최종 볼륨
+            const step = 0.05;
+
+            const interval = setInterval(() => {
+              v += step;
+              if (v >= target) {
+                v = target;
+                clearInterval(interval);
+              }
+              audio.volume = v;
+            }, 80);
+          })
+          .catch((err) => {
+            console.warn("BGM play failed:", err);
+          });
+      }
+
+      // 한 번만 실행되도록 리스너 제거
+      window.removeEventListener("click", handleFirstInteraction);
+      window.removeEventListener("touchstart", handleFirstInteraction);
+    };
+
+    // 아무데나 클릭/터치하면 BGM 시작
+    window.addEventListener("click", handleFirstInteraction);
+    window.addEventListener("touchstart", handleFirstInteraction);
+
+    return () => {
+      window.removeEventListener("click", handleFirstInteraction);
+      window.removeEventListener("touchstart", handleFirstInteraction);
+    };
+  }, []);
+
   return (
     <>
       <GlobalStyle />
+
+      {/* 🎵 BGM 오디오 요소 - 화면에는 보이지 않음 */}
+      <audio ref={bgmRef} src={bgmSrc} loop playsInline />
+
       <PageWrapper>
         <Header
           inlineRef={inlineReserveRef}
@@ -118,9 +177,10 @@ export default function App() {
 
         <Footer />
 
-        {!isInlineVisible && !hideFloating && (
-          <FloatingReserveButton onClick={() => handleTabClick("reserve")} />
-        )}
+        <FloatingReserveButton
+          visible={!isInlineVisible && !hideFloating}
+          onClick={() => handleTabClick("reserve")}
+        />
       </PageWrapper>
     </>
   );

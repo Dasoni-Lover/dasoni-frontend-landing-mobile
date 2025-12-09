@@ -1,8 +1,14 @@
+// src/components/FloatingReserveButton.jsx
 import React, { forwardRef } from "react";
 import styled, { keyframes } from "styled-components";
-function FloatingReserveButton({ onClick }) {
+
+function FloatingReserveButton({ onClick, visible }) {
   return (
-    <FloatingButton type="button" onClick={onClick}>
+    <FloatingButton
+      type="button"
+      onClick={onClick}
+      $visible={visible} // 👈 상태를 스타일에 전달
+    >
       사전 예약하기
     </FloatingButton>
   );
@@ -37,7 +43,6 @@ const ButtonBase = styled.button`
   cursor: pointer;
   border-radius: 12px;
 
-  /* 🔥 여기만 변경: 움직이는 그라데이션 */
   background: linear-gradient(
     90deg,
     #ffaab0,
@@ -62,12 +67,20 @@ const ButtonBase = styled.button`
 const FloatingButton = styled(ButtonBase)`
   position: fixed;
   left: 50%;
-  transform: translateX(-50%);
   bottom: 88px;
   max-width: 380px;
   width: 290px;
   height: 54px;
   z-index: 30;
+
+  /* ✨ 등장/퇴장 부드럽게 */
+  transform: translateX(-50%)
+    translateY(${({ $visible }) => ($visible ? "0" : "12px")});
+  opacity: ${({ $visible }) => ($visible ? 1 : 0)};
+  transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+
+  /* 안 보일 때는 클릭 안 되도록 */
+  pointer-events: ${({ $visible }) => ($visible ? "auto" : "none")};
 `;
 
 const InlineButton = styled(ButtonBase)`
