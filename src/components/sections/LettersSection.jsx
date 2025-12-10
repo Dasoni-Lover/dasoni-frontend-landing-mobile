@@ -9,11 +9,11 @@ import {
 } from "./SectionBase";
 import styled, { keyframes, css } from "styled-components";
 
-import ImgPostBox from "../../assets/img-postbox.svg";
+import ImgPostBox from "../../assets/img-postbox.png";
 import ImgLetter1 from "../../assets/img-letter-1.svg";
 import ImgLetter2 from "../../assets/img-letter-2.svg";
 import ImgLetter3 from "../../assets/img-letter-3.svg";
-import ImgTape from "../../assets/img-tape.svg";
+import ImgTape from "../../assets/img-tape.png";
 import SampleVoice from "../../assets/sample-voice.mp3";
 
 import PlayIcon from "../../assets/icon-play.svg";
@@ -268,7 +268,7 @@ const LettersSection = forwardRef((_, ref) => {
         <SectionIconWrapper>
           <img
             src={ImgPostBox}
-            style={{ marginTop: "35px", marginBottom: "6px" }}
+            style={{ marginTop: "35px", marginBottom: "6px", width: "77px" }}
             alt="postbox"
           />
           <SectionLabel style={{ color: "#E96D6D" }}>편지함</SectionLabel>
@@ -479,6 +479,7 @@ const LetterImage = styled.img`
 
 const TapeImg = styled.img`
   display: block;
+  width: 366px;
 `;
 
 const TapeWrapper = styled.div`

@@ -1,15 +1,6 @@
 // src/features/Landing/components/MyHallSection.jsx
 import React, { forwardRef, useEffect, useState } from "react";
 import {
-  Avatar,
-  CardBody,
-  CardDate,
-  CardHeader,
-  CardImage,
-  CardName,
-  CardScrollWrapper,
-  CardText,
-  MyHallCard,
   SectionContainer,
   SectionIconWrapper,
   SectionLabel,
@@ -17,8 +8,8 @@ import {
   SectionTitle,
 } from "./SectionBase";
 import styled from "styled-components";
-import ImgBlueHouse from "../../assets/img-blue-house.svg";
-import ImgMyHall from "../../assets/img-my-hall.svg";
+import ImgBlueHouse from "../../assets/img-blue-house.png";
+import ImgMyHall from "../../assets/img-my-hall.png";
 
 const MyHallSection = forwardRef((_, ref) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -59,7 +50,7 @@ const MyHallSection = forwardRef((_, ref) => {
         <SectionIconWrapper>
           <img
             src={ImgBlueHouse}
-            style={{ marginTop: "35px", marginBottom: "6px" }}
+            style={{ marginTop: "35px", marginBottom: "6px", width: "77px" }}
             alt="my hall icon"
           />
           <SectionLabel style={{ color: "#BD7EE4" }}>나의 추모관</SectionLabel>

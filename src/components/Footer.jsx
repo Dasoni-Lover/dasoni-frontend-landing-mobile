@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
-import ImgFooter from "../assets/img-footer.svg";
-
+import ImgFooter from "../assets/img-footer.png";
 function Footer() {
   const [isVisible, setIsVisible] = useState(false);
   const footerRef = useRef(null);
