@@ -27,6 +27,44 @@ const MemorialSection = forwardRef((_, ref) => {
   const aiRef = useRef(null);
   const linkRef = useRef(null);
 
+  // 🔹 섹션별 이미지 로딩 상태
+  const [isSectionImgReady, setIsSectionImgReady] = useState(false); // 상단 + 카드 목록
+  const [isAIImgReady, setIsAIImgReady] = useState(false); // AI 요청/응답 이미지
+  const [isLinkImgReady, setIsLinkImgReady] = useState(false); // 링크 공유 mockup
+
+  const sectionImgCountRef = useRef(0);
+  const aiImgCountRef = useRef(0);
+  const linkImgCountRef = useRef(0);
+
+  // 상단(노란집 + 3장 카드) 이미지 로딩 핸들러
+  const handleSectionImgLoad = () => {
+    sectionImgCountRef.current += 1;
+    if (sectionImgCountRef.current >= 4 && !isSectionImgReady) {
+      setTimeout(() => setIsSectionImgReady(true), 100);
+    }
+  };
+
+  // AI 섹션 이미지 로딩 핸들러 (요청/응답 2개)
+  const handleAIImgLoad = () => {
+    aiImgCountRef.current += 1;
+    if (aiImgCountRef.current >= 2 && !isAIImgReady) {
+      setTimeout(() => setIsAIImgReady(true), 100);
+    }
+  };
+
+  // 링크 모크업 이미지 로딩 핸들러
+  const handleLinkImgLoad = () => {
+    linkImgCountRef.current += 1;
+    if (linkImgCountRef.current >= 1 && !isLinkImgReady) {
+      setTimeout(() => setIsLinkImgReady(true), 100);
+    }
+  };
+
+  // ✅ 실제로 애니메이션을 시작할 조건들
+  const sectionReady = isSectionVisible && isSectionImgReady;
+  const aiReady = isAIVisible && isAIImgReady;
+  const linkReady = isLinkVisible && isLinkImgReady;
+
   // 전체 MemorialSection 진입 시 (상단 영역용)
   useEffect(() => {
     if (!ref || !("current" in ref)) return;
@@ -109,43 +147,47 @@ const MemorialSection = forwardRef((_, ref) => {
       data-tab-id="memorial"
       $bgGradient="linear-gradient(180deg, #FFEED9 27.4%, #FFC882 39.42%, #FFFDFA 53.37%)"
     >
-      {/* 섹션 진입 시 등장하는 상단 영역들 */}
-      <FadeInItem $visible={isSectionVisible} $delay="0s">
+      {/* 섹션 진입 + 이미지 로딩 완료 후 등장하는 상단 영역들 */}
+      <FadeInItem $visible={sectionReady} $delay="0s">
         <SectionIconWrapper>
-          <img src={ImgYellowHouse} style={{ marginTop: "50px" }} />
+          <img
+            src={ImgYellowHouse}
+            style={{ marginTop: "50px" }}
+            onLoad={handleSectionImgLoad}
+          />
           <SectionLabel>추모관</SectionLabel>
         </SectionIconWrapper>
       </FadeInItem>
 
-      <FadeInItem $visible={isSectionVisible} $delay="0.1s">
+      <FadeInItem $visible={sectionReady} $delay="0.1s">
         <SectionTitle>
           고인과의 추억이 담긴 사진을 <br /> 앨범에 올려주세요
         </SectionTitle>
       </FadeInItem>
 
-      <FadeInItem $visible={isSectionVisible} $delay="0.2s">
+      <FadeInItem $visible={sectionReady} $delay="0.2s">
         <SectionSubtitle style={{ marginBottom: "43px" }}>
           추모관에 방문한 추모객들과 추억을 나눌 수 있어요
         </SectionSubtitle>
       </FadeInItem>
 
-      <FadeInItem $visible={isSectionVisible} $delay="0.3s">
+      <FadeInItem $visible={sectionReady} $delay="0.3s">
         <CardScrollWrapper>
-          <PostImg src={ImgPost1} />
-          <PostImg src={ImgPost2} />
-          <PostImg src={ImgPost3} />
+          <PostImg src={ImgPost1} onLoad={handleSectionImgLoad} />
+          <PostImg src={ImgPost2} onLoad={handleSectionImgLoad} />
+          <PostImg src={ImgPost3} onLoad={handleSectionImgLoad} />
         </CardScrollWrapper>
       </FadeInItem>
 
-      {/* AISection: 이 영역에 실제로 도달했을 때 내부 컴포넌트 순차 애니메이션 */}
+      {/* AISection: 이 영역에 실제로 도달 + AI 이미지 로딩 완료 시 내부 컴포넌트 순차 애니메이션 */}
       <FadeInWrapper ref={aiRef}>
-        <FadeInItem $visible={isAIVisible} $delay="0s">
+        <FadeInItem $visible={aiReady} $delay="0s">
           <SectionTitle>
             함께한 순간의 사진이 남아있지 않아 아쉬우신가요?
           </SectionTitle>
         </FadeInItem>
 
-        <FadeInItem $visible={isAIVisible} $delay="0.1s">
+        <FadeInItem $visible={aiReady} $delay="0.1s">
           <SectionSubtitle style={{ marginBottom: "18px" }}>
             혹은 함께하지 못해 상상만 했던 순간이 있나요? <br />
             기억 속의 장면을 AI로 직접 만들어 보세요.
@@ -154,16 +196,16 @@ const MemorialSection = forwardRef((_, ref) => {
         <YellowBg>
           {/* 오른쪽 정렬 (요청 버블 쪽) */}
           <FadeInItem
-            $visible={isAIVisible}
+            $visible={aiReady}
             $delay="0.2s"
             $fullWidth
             $align="right"
           >
-            <RequestImg src={ImgAIRequest} />
+            <RequestImg src={ImgAIRequest} onLoad={handleAIImgLoad} />
           </FadeInItem>
 
           <FadeInItem
-            $visible={isAIVisible}
+            $visible={aiReady}
             $delay="0.3s"
             $fullWidth
             $align="right"
@@ -174,35 +216,25 @@ const MemorialSection = forwardRef((_, ref) => {
           </FadeInItem>
 
           {/* 왼쪽 정렬 (응답 버블 쪽) */}
-          <FadeInItem
-            $visible={isAIVisible}
-            $delay="0.4s"
-            $fullWidth
-            $align="left"
-          >
-            <ResponseImg src={ImgAIResponse} />
+          <FadeInItem $visible={aiReady} $delay="0.4s" $fullWidth $align="left">
+            <ResponseImg src={ImgAIResponse} onLoad={handleAIImgLoad} />
           </FadeInItem>
 
-          <FadeInItem
-            $visible={isAIVisible}
-            $delay="0.5s"
-            $fullWidth
-            $align="left"
-          >
+          <FadeInItem $visible={aiReady} $delay="0.5s" $fullWidth $align="left">
             <ResponseChat>요청하신 이미지를 생성했어요</ResponseChat>
           </FadeInItem>
         </YellowBg>
       </FadeInWrapper>
 
-      {/* LinkShareSection: 이 영역에 도달했을 때 내부 컴포넌트 순차 애니메이션 */}
+      {/* LinkShareSection: 이 영역에 도달 + mockup 이미지 로딩 완료 시 내부 컴포넌트 순차 애니메이션 */}
       <FadeInWrapper ref={linkRef}>
-        <FadeInItem $visible={isLinkVisible} $delay="0s">
+        <FadeInItem $visible={linkReady} $delay="0s">
           <LinkShareSection>
             <SectionTitle>추모관 링크를 공유해 주세요</SectionTitle>
           </LinkShareSection>
         </FadeInItem>
 
-        <FadeInItem $visible={isLinkVisible} $delay="0.1s">
+        <FadeInItem $visible={linkReady} $delay="0.1s">
           <SectionSubtitle
             style={{ marginBottom: "18px", textAlign: "center" }}
           >
@@ -212,8 +244,12 @@ const MemorialSection = forwardRef((_, ref) => {
           </SectionSubtitle>
         </FadeInItem>
 
-        <FadeInItem $visible={isLinkVisible} $delay="0.2s">
-          <img src={ImgMockUp} style={{ width: "100%", display: "block" }} />
+        <FadeInItem $visible={linkReady} $delay="0.2s">
+          <img
+            src={ImgMockUp}
+            style={{ width: "100%", display: "block" }}
+            onLoad={handleLinkImgLoad}
+          />
         </FadeInItem>
       </FadeInWrapper>
     </SectionContainer>
