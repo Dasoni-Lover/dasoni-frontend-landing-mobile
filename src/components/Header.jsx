@@ -1,22 +1,38 @@
-import React from "react";
-import styled, { keyframes } from "styled-components";
+import React, { useRef, useState, useCallback } from "react";
+import styled, { keyframes, css } from "styled-components";
 import ImgFrame from "../assets/img-frame.svg";
 import ImgLogo from "../assets/img-logo.svg";
 import ImgHouse from "../assets/img-house.svg";
 import { InlineReserveButton } from "./FloatingReserveButton";
 
 function Header({ inlineRef, onReserveClick }) {
+  const [isReady, setIsReady] = useState(false);
+  const loadedCountRef = useRef(0);
+
+  // 이미지 세 장 다 로딩된 뒤에 애니메이션 시작
+  const handleImgLoad = useCallback(() => {
+    loadedCountRef.current += 1;
+
+    // Frame, Logo, House 이미지 총 3개
+    if (loadedCountRef.current >= 3 && !isReady) {
+      // 살짝 딜레이 주고 시작하면 더 부드럽게 느낌남
+      setTimeout(() => {
+        setIsReady(true);
+      }, 120);
+    }
+  }, [isReady]);
+
   return (
     <HeaderContainer>
-      <FrameImg src={ImgFrame} />
-      <LogoImg src={ImgLogo} />
-      <Title>
+      <FrameImg src={ImgFrame} onLoad={handleImgLoad} $ready={isReady} />
+      <LogoImg src={ImgLogo} onLoad={handleImgLoad} $ready={isReady} />
+      <Title $ready={isReady}>
         순우리말로 사랑하는 사람을 뜻하는 다소니는
         <br />
         사랑하는 사람을 추모하는 <b>온라인 추모 공간</b>입니다
       </Title>
-      <HouseImg src={ImgHouse} />
-      <ButtonWrapper>
+      <HouseImg src={ImgHouse} onLoad={handleImgLoad} $ready={isReady} />
+      <ButtonWrapper $ready={isReady}>
         <InlineReserveButton ref={inlineRef} onClick={onReserveClick} />
       </ButtonWrapper>
     </HeaderContainer>
@@ -60,17 +76,34 @@ const HeaderContainer = styled.header`
   justify-content: space-between;
 `;
 
+// 공통: 초기 상태는 안 보이게
+const baseFadeItem = css`
+  opacity: 0;
+  transform: translateY(12px);
+`;
+
 const FrameImg = styled.img`
   margin-bottom: 25px;
-  opacity: 0;
-  animation: ${fadeUp} 0.55s ease forwards;
+  ${baseFadeItem};
+
+  ${({ $ready }) =>
+    $ready &&
+    css`
+      animation: ${fadeUp} 0.55s ease forwards;
+      animation-delay: 0.05s;
+    `}
 `;
 
 const LogoImg = styled.img`
   margin-bottom: 15px;
-  opacity: 0;
-  animation: ${fadeUp} 0.55s ease forwards;
-  animation-delay: 0.15s;
+  ${baseFadeItem};
+
+  ${({ $ready }) =>
+    $ready &&
+    css`
+      animation: ${fadeUp} 0.55s ease forwards;
+      animation-delay: 0.2s;
+    `}
 `;
 
 const Title = styled.div`
@@ -82,26 +115,41 @@ const Title = styled.div`
   font-weight: 400;
   line-height: 144%; /* 23.04px */
   margin-bottom: 47px;
-  opacity: 0;
-  animation: ${fadeUp} 0.55s ease forwards;
-  animation-delay: 0.3s;
+  ${baseFadeItem};
+
+  ${({ $ready }) =>
+    $ready &&
+    css`
+      animation: ${fadeUp} 0.55s ease forwards;
+      animation-delay: 0.35s;
+    `}
 `;
 
 const HouseImg = styled.img`
   margin-bottom: 45px;
-  opacity: 0;
-  animation: ${fadeUp} 0.55s ease forwards,
-    ${floaty} 2s ease-in-out 0.9s infinite;
-  animation-delay: 0.45s, 0.9s;
+  ${baseFadeItem};
+
+  ${({ $ready }) =>
+    $ready &&
+    css`
+      animation: ${fadeUp} 0.55s ease forwards,
+        ${floaty} 2s ease-in-out 0.9s infinite;
+      animation-delay: 0.5s, 0.9s;
+    `}
 `;
 
 const ButtonWrapper = styled.div`
-  opacity: 0;
-  animation: ${fadeUp} 0.55s ease forwards;
-  animation-delay: 0.6s;
   width: 100%;
   display: flex;
   justify-content: center;
+  ${baseFadeItem};
+
+  ${({ $ready }) =>
+    $ready &&
+    css`
+      animation: ${fadeUp} 0.55s ease forwards;
+      animation-delay: 0.65s;
+    `}
 `;
 
 export default Header;
