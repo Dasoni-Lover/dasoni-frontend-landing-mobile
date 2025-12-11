@@ -383,7 +383,7 @@ const LettersSection = forwardRef((_, ref) => {
                   key={idx}
                   $delay={idx}
                   // 각 막대마다 약간 다른 속도로 흔들리게
-                  $speed={0.9 + (idx % 5) * 0.7}
+                  $speed={0.9 + (idx % 5)}
                 />
               ))}
             </WaveBars>
