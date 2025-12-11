@@ -1,3 +1,4 @@
+// src/App.jsx
 import React, { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 import Footer from "./components/Footer";
@@ -10,8 +11,8 @@ import MemorialSection from "./components/sections/MemorialSection";
 import MyHallSection from "./components/sections/MyHallSection";
 import ReserveSection from "./components/sections/ReserveSection";
 
-// 🎵 BGM 파일 import (Vite에서 자동으로 URL로 번들됨)
-import bgmSrc from "./assets/dasoni-bgm.mp3";
+// 🎵 BGM 파일 import (m4a로 변경)
+import bgmSrc from "./assets/dasoni-bgm.m4a";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("memorial");
@@ -107,13 +108,25 @@ export default function App() {
     };
   }, []);
 
-  // 🎵 첫 사용자 인터랙션(클릭/터치) 이후에만 BGM 재생
+  // 🎵 첫 사용자 인터랙션(클릭/터치) 이후에만 BGM 재생 + 무한 반복 & 끊겨도 재시도
   useEffect(() => {
     const audio = bgmRef.current;
     if (!audio) return;
 
+    // 안전하게 loop 보장
+    audio.loop = true;
+
+    const handleEnded = () => {
+      // 혹시 loop가 브라우저 이슈로 안 먹었을 때 대비
+      audio.currentTime = 0;
+      audio
+        .play()
+        .catch((err) => console.warn("BGM replay failed on ended:", err));
+    };
+
+    audio.addEventListener("ended", handleEnded);
+
     const handleFirstInteraction = () => {
-      // 시작 설정
       audio.currentTime = 0;
       audio.volume = 0;
 
@@ -153,6 +166,7 @@ export default function App() {
     return () => {
       window.removeEventListener("click", handleFirstInteraction);
       window.removeEventListener("touchstart", handleFirstInteraction);
+      audio.removeEventListener("ended", handleEnded);
     };
   }, []);
 
