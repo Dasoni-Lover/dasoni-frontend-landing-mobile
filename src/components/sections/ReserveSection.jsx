@@ -1,14 +1,9 @@
 // src/components/sections/ReserveSection.jsx
 import React, { forwardRef, useState, useEffect } from "react";
-import {
-  SectionContainer,
-  SectionIconWrapper,
-  SectionLabel,
-  SectionSubtitle,
-  SectionTitle,
-} from "./SectionBase";
+import { SectionContainer, SectionIconWrapper } from "./SectionBase";
 import styled, { keyframes } from "styled-components";
 import ReserveConfirmModal from "../ReserveConfirmModal";
+import IconEclipse from "../../assets/icon-essential-eclipse.svg";
 import { supabase } from "../../lib/supabaseClient"; // ✅ 경로는 프로젝트 구조에 맞게 조정
 
 const ReserveSection = forwardRef((_, ref) => {
@@ -18,6 +13,8 @@ const ReserveSection = forwardRef((_, ref) => {
   // ✅ 생년월일 & 이메일 상태
   const [birthDate, setBirthDate] = useState("");
   const [email, setEmail] = useState("");
+  // ✅ 의견/피드백 상태 추가
+  const [feedback, setFeedback] = useState("");
 
   // ✅ DatePicker / Confirm 모달 상태
   const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
@@ -79,6 +76,7 @@ const ReserveSection = forwardRef((_, ref) => {
           gender,
           birth_date: birthDate,
           email,
+          feedback,
         },
       ]);
 
@@ -95,6 +93,7 @@ const ReserveSection = forwardRef((_, ref) => {
       setGender("male");
       setBirthDate("");
       setEmail("");
+      setFeedback("");
     } catch (err) {
       console.error(err);
       alert("알 수 없는 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
@@ -122,7 +121,7 @@ const ReserveSection = forwardRef((_, ref) => {
         </FadeInItem>
         <FadeInItem $visible={isVisible} $delay="0.15s">
           <ReserveContent style={{ marginBottom: "15px" }}>
-            2025. 12. 10. ~ 25. 12. 20. (목)
+            2025. 12. 12. (금) ~ 25. 12. 25. (목)
           </ReserveContent>
         </FadeInItem>
 
@@ -137,18 +136,28 @@ const ReserveSection = forwardRef((_, ref) => {
 
         <FadeInItem $visible={isVisible} $delay="0.4s">
           <ReserveGuide>
-            사전 예약 신청을 위해 아래 폼을 입력해주세요
+            사전 예약 신청을 위해 아래 폼을 입력해 주세요
           </ReserveGuide>
         </FadeInItem>
 
         <FadeInItem $visible={isVisible} $delay="0.5s">
           <ReserveForm>
             <FormRow>
-              <FormColumn>
-                <FormLabel>성별</FormLabel>
-                <FormLabel>생년월일</FormLabel>
-                <FormLabel>이메일 주소</FormLabel>
-              </FormColumn>
+              <FormColumn2>
+                <FormLabel>
+                  성별
+                  <RedEclipse src={IconEclipse} />
+                </FormLabel>
+                <FormLabel>
+                  생년월일
+                  <RedEclipse src={IconEclipse} />
+                </FormLabel>
+                <FormLabel>
+                  이메일 주소
+                  <RedEclipse src={IconEclipse} />
+                </FormLabel>
+                <FormLabel>의견</FormLabel>
+              </FormColumn2>
 
               <FormColumn>
                 <GenderToggle>
@@ -182,12 +191,23 @@ const ReserveSection = forwardRef((_, ref) => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
+
+                {/* ✅ 의견/피드백 입력 추가 (이메일 아래) */}
+                <FormTextarea
+                  placeholder="의견 또는 피드백을 남겨주세요(선택)"
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                />
               </FormColumn>
             </FormRow>
+            <ReserveGuide2>
+              입력하신 개인정보는 예약 안내 목적에만 사용되며, <br />
+              목적 달성 후 안전하게 파기됩니다.
+            </ReserveGuide2>
 
             {/* ✅ Supabase 연동된 제출 버튼 */}
             <ReserveButton type="button" onClick={handleSubmitReserve}>
-              사전 예약 제출하기
+              사전 예약 신청하기
             </ReserveButton>
           </ReserveForm>
         </FadeInItem>
@@ -212,10 +232,6 @@ const ReserveSection = forwardRef((_, ref) => {
 
 ReserveSection.displayName = "ReserveSection";
 export default ReserveSection;
-
-const SectionIconReserve = styled.div`
-  font-size: 2rem;
-`;
 
 // ✅ 페이드 인 공통 래퍼
 const FadeInItem = styled.div`
@@ -268,6 +284,17 @@ const ReserveGuide = styled.div`
   margin-bottom: 15px;
 `;
 
+const ReserveGuide2 = styled.div`
+  color: var(--10, #ddd);
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%; /* 18.2px */
+  margin-bottom: 15px;
+`;
+
 const ReserveForm = styled.div`
   background: #ffffff;
   border-radius: 13px;
@@ -280,7 +307,7 @@ const ReserveForm = styled.div`
 const FormRow = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 `;
 
 const FormColumn = styled.div`
@@ -288,6 +315,14 @@ const FormColumn = styled.div`
   gap: 12px;
   flex-direction: column;
   justify-content: space-around;
+  align-items: end;
+`;
+
+const FormColumn2 = styled.div`
+  padding-top: 10px;
+  display: flex;
+  gap: 37px;
+  flex-direction: column;
 `;
 
 const FormLabel = styled.div`
@@ -306,6 +341,8 @@ const GenderToggle = styled.div`
   grid-template-columns: repeat(2, 1fr);
   border-radius: 8px;
   background: #f9f8f7;
+  align-self: start;
+  margin-left: 10px;
   border: 1px solid var(--10, #ddd);
 `;
 
@@ -322,7 +359,7 @@ const GenderButton = styled.button`
 `;
 
 const FormInput = styled.input`
-  width: 100%;
+  width: 95%;
   border-radius: 8px;
   border: 1px solid var(--main, #ffbc67);
   padding: 12px 14px;
@@ -345,6 +382,58 @@ const FormInput = styled.input`
     font-style: normal;
     font-weight: 500;
     line-height: 130%; /* 20.8px */
+  }
+`;
+
+const FormTextarea = styled.textarea`
+  width: 95%;
+  border-radius: 8px;
+  border: 1px solid var(--main, #ffbc67);
+  padding: 12px 14px;
+  outline: none;
+  background: #fdfcfb;
+
+  color: #4a4a4a;
+  text-align: center;
+  font-family: Pretendard;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 130%;
+
+  min-height: 70px;
+  resize: none;
+
+  &::placeholder {
+    color: var(--10, #ddd);
+    text-align: center;
+    font-family: Pretendard;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 130%;
+  }
+
+  /* ======================
+     스크롤바 심플 스타일
+     ====================== */
+
+  /* Webkit (Chrome, Safari) */
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: #e5e2dd;
+    border-radius: 999px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background-color: #d8d4ce;
   }
 `;
 
@@ -393,6 +482,10 @@ const ReserveButton = styled.div`
   font-weight: 700;
   line-height: 145%; /* 23.2px */
   cursor: pointer;
+`;
+
+const RedEclipse = styled.img`
+  width: 14px;
 `;
 
 /* ===========================

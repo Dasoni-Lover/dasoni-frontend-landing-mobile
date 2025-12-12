@@ -14,8 +14,8 @@ import ImgPost1 from "../../assets/img-post-1.svg";
 import ImgPost2 from "../../assets/img-post-2.svg";
 import ImgPost3 from "../../assets/img-post-3.svg";
 
-import ImgAIRequest from "../../assets/img-ai-request.svg";
-import ImgAIResponse from "../../assets/img-ai-response.svg";
+import ImgAIRequest from "../../assets/img-ai-request.png";
+import ImgAIResponse from "../../assets/img-ai-response.png";
 
 import ImgMockUp from "../../assets/img-mockup.png";
 
@@ -305,10 +305,12 @@ const YellowBg = styled.div`
 
 const RequestImg = styled.img`
   margin-bottom: 10px;
+  width: 208px;
 `;
 
 const ResponseImg = styled.img`
   margin-bottom: 10px;
+  width: 100px;
 `;
 
 const ReqeustChat = styled.div`
