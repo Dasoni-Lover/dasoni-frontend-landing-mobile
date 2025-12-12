@@ -415,9 +415,7 @@ const LettersSection = forwardRef((_, ref) => {
         </VoicePlayerWrapper>
 
         <FadeInItem $visible={isVoiceVisible} $delay="0.4s">
-          <VoiceText>
-            실제 ㅇㅇㅇ씨의 음성으로 재현한 테스트 편지입니다.
-          </VoiceText>
+          <VoiceText>음성 편지를 들어보세요</VoiceText>
         </FadeInItem>
       </VoiceSectionWrapper>
     </SectionContainer>

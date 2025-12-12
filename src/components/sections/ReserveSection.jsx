@@ -274,7 +274,7 @@ const ReserveContent = styled.div`
 `;
 
 const ReserveGuide = styled.div`
-  color: var(--10, #ddd);
+  color: #acacac;
   text-align: center;
   font-family: Pretendard;
   font-size: 14px;
@@ -378,7 +378,7 @@ const FormInput = styled.input`
     color: var(--10, #ddd);
     text-align: center;
     font-family: Pretendard;
-    font-size: 16px;
+    font-size: 14px;
     font-style: normal;
     font-weight: 500;
     line-height: 130%; /* 20.8px */
@@ -408,7 +408,7 @@ const FormTextarea = styled.textarea`
     color: var(--10, #ddd);
     text-align: center;
     font-family: Pretendard;
-    font-size: 16px;
+    font-size: 14px;
     font-style: normal;
     font-weight: 500;
     line-height: 130%;
